@@ -1,0 +1,14 @@
+[Unit]
+Description=att_bypass_via_bpf_xdp
+
+[Service]
+Type=simple
+ExecStart=/root/bpf_xdp_att_bypass/att.sh
+Restart=on-failure
+User=root
+Group=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
