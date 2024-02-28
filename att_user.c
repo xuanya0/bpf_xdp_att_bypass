@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <libgen.h>
+#include <signal.h>
 
 #include "att.skel.c"
 
@@ -55,6 +56,11 @@ static void get_if_info(const char *if_name, int *ifindex, unsigned char *mac)
 	close(sock);
 }
 
+void sighandler(int sig)
+{
+	fprintf(stderr, "signal %s received, exiting...\n", strsignal(sig));
+}
+
 int main(int argc, char **argv)
 {
 	int opt;
@@ -62,6 +68,8 @@ int main(int argc, char **argv)
 	int us_ifindex, gw_ifindex, rg_ifindex;
 	unsigned char us_mac[ETH_ALEN], gw_mac[ETH_ALEN], rg_mac[ETH_ALEN];
 
+	signal(SIGINT, sighandler);
+	signal(SIGTERM, sighandler);
 	while ((opt = getopt(argc, argv, ":ch")) != -1) {
 		switch (opt) {
 		case 'c':
@@ -137,8 +145,8 @@ int main(int argc, char **argv)
 	bpf_xdp_attach(gw_ifindex, bpf_program__fd(prog->progs.gw_redir), 0, NULL);
 	bpf_xdp_attach(rg_ifindex, bpf_program__fd(prog->progs.rg_redir), 0, NULL);
 
-	fprintf(stderr, "Program Running, press ENTER to exit=========================");
-	getchar();
+	fprintf(stderr, "Program Running, press Ctrl-C to exit========================\n");
+	pause();
 
 	bpf_xdp_detach(us_ifindex, 0, NULL);
 	bpf_xdp_detach(gw_ifindex, 0, NULL);
