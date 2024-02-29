@@ -25,6 +25,10 @@ nsenter -at $ns_pid ip link set $US_IF promisc on
 nsenter -at $ns_pid ip link set $GW_IF promisc on
 nsenter -at $ns_pid ip link set $RG_IF promisc on
 
+nsenter -at $ns_pid ip link set $US_IF up
+nsenter -at $ns_pid ip link set $GW_IF up
+nsenter -at $ns_pid ip link set $RG_IF up
+
 # nsenter -at $ns_pid $PWD/$(dirname $0)/att $US_IF $GW_IF $RG_IF $RG_MAC
 nsenter -at $ns_pid $PWD/$(dirname $0)/att -c $US_IF $GW_IF $RG_IF $RG_MAC
 
