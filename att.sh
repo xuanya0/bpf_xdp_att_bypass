@@ -10,6 +10,16 @@ while !   (ip link show $US_IF > /dev/null \
         && ip link show $RG_IF > /dev/null);
 do sleep 1; done
 
+# Maybe tune your interface like this if no adaptive irq coalescing
+# verify interface support before usage
+COAL=100
+RING=32768
+ethtool -C $US_IF rx-usecs $COAL
+# ethtool -C $US_IF tx-usecs $COAL
+ethtool -G $US_IF rx $RING
+ethtool -G $US_IF tx $RING
+
+
 unshare -mn sleep 2 &
 ns_pid=$!
 sleep 0.1
